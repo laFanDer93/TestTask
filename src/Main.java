@@ -6,19 +6,72 @@ public class Main {
     public static void main(String[] args) throws ScannerException {
         Scanner scan = new Scanner(System.in);
         String operation;
+        HashMap<String, String> romeToArab = getStringHashMapRomeToArab();
+        HashMap<String, String> arabToRome = getStringHashMapArabToRome();
+
         while (true) {
-
             operation = String.valueOf(scan.nextLine());
-            calc(operation);
+            System.out.println(calc(operation, romeToArab, arabToRome));
         }
+    }
+
+    public static String calc(String input, HashMap<String, String> romeToArab, HashMap<String, String> arabToRome) throws ScannerException {
+        String finalResult;
+        String[] parts = input.split(" ");
+
+        String firstOperand = parts[0];
+        String operator = parts[1];
+        String secondOperand = parts[2];
+
+        if ((romeToArab.containsKey(firstOperand) && romeToArab.containsKey(secondOperand))) {
+
+            String firstOperandInArab = romeToArab.get(firstOperand);
+            String secondOperandInArab = romeToArab.get(secondOperand);
+            String resultArab = calcResultInArabic(firstOperandInArab, secondOperandInArab, operator);
+            if (Integer.parseInt(resultArab) < 0 ) {
+                throw new ScannerException("Результатом работы калькулятора с римскими числами могут быть только положительные числа, если результат работы меньше единицы, выбрасывается исключение" );
+            } else {
+                finalResult = arabToRome.get(resultArab);
+            }
+
+            return finalResult;
+        } else if ((Integer.parseInt(firstOperand) > 0 && Integer.parseInt(firstOperand) < 11) &&
+                (Integer.parseInt(secondOperand) > 0 && Integer.parseInt(secondOperand) < 11))   {
+
+            finalResult = calcResultInArabic(firstOperand, secondOperand, operator);
+            return finalResult;
+
+        } else {
+            throw new ScannerException("Неправильный формат выражения. Используйте одну систему счисления(римскую или арабскую), 2 операнда и 1 оператор, пробелы между операндами и оператором, цифры от 1 до 10 включительно. Пример: II * VI; 4 - 9" );
+        }
+    }
+
+    static String calcResultInArabic (String firstOperand, String secondOperand, String operator ) throws ScannerException {
+        int result;
+        int firstOperand1 = Integer.parseInt(firstOperand);
+        int secondOperand1 = Integer.parseInt(secondOperand);
+
+        switch (operator){
+            case "+":
+                result = firstOperand1 + secondOperand1;
+                break;
+            case "-":
+                result = firstOperand1 - secondOperand1;
+                break;
+            case "*":
+                result = firstOperand1 * secondOperand1;
+                break;
+            case "/":
+                result = firstOperand1 / secondOperand1;
+                break;
+            default:
+                throw new ScannerException("Неправильное арифметическое действие. Только +, -, *, /");
         }
 
-    public static String calc(String input) throws ScannerException {
-        //+принять строку и разделить по пробелам
-        //+(метод, возвращает булл)сравнить 1 и 3 элемент массива, принадлежат ли к одному енаму
-        //+если это арабские цифры(сравнить по енаму), то перевести в инт и посчитать результат
-        //+ели это римские цифры, то перевести в арабские, выполнить вычисление и вернуть результат в римские. Минимум 1(отрицательного числа не должно быть)
-        //оператор должен быть один из +-/*
+        return Integer.toString(result);
+    }
+
+    private static HashMap<String, String> getStringHashMapRomeToArab(){
         HashMap<String, String> romeToArab = new HashMap<String, String>();
         romeToArab.put("I", "1");
         romeToArab.put("II", "2");
@@ -31,6 +84,9 @@ public class Main {
         romeToArab.put("IX", "9");
         romeToArab.put("X", "10");
 
+        return romeToArab;
+    }
+    private static HashMap<String, String> getStringHashMapArabToRome(){
         HashMap<String, String> arabToRome = new HashMap<String, String>();
         arabToRome.put("1", "I");
         arabToRome.put("2", "II");
@@ -133,76 +189,6 @@ public class Main {
         arabToRome.put("99", "XCIX");
         arabToRome.put("100", "C");
 
-
-        String[] operators = new String[]{"+", "-", "*", "/"};
-        List<String> operatorList = new ArrayList<>(Arrays.asList(operators));
-
-        String[] parts = input.split(" ");
-        String firstOperand = parts[0];
-        String operator = parts[1];
-        String secondOperand = parts[2];
-
-        boolean isPossible;
-        boolean isArabic;
-        boolean isRome;
-
-        //System.out.println("first operand " + firstOperand);
-        //System.out.println("second operand " + secondOperand);
-        //System.out.println("operator " + operator);
-
-        if ((romeToArab.containsKey(firstOperand) && romeToArab.containsKey(secondOperand))) {
-            isPossible = true;
-            isRome = true;
-            isArabic = false;
-
-            String resultArab = calcResultInArabic(romeToArab.get(firstOperand), romeToArab.get(secondOperand), operator);
-            if (Integer.parseInt(resultArab) < 0 ) {
-                resultArab = "I";
-                throw new ScannerException("Результатом работы калькулятора с римскими числами могут быть только положительные числа, если результат работы меньше единицы, выбрасывается исключение" );
-            } else {
-                resultArab = arabToRome.get(resultArab);
-            }
-            System.out.println(resultArab);
-        } else if((arabToRome.containsKey(firstOperand) && arabToRome.containsKey(secondOperand))) {
-            isPossible = true;
-            isRome = false;
-            isArabic = true;
-
-            System.out.println(calcResultInArabic(firstOperand, secondOperand, operator));
-
-        } else {
-            isPossible = false;
-            isRome = false;
-            isArabic = false;
-            throw new ScannerException("Неправильный формат выражения. Используйте одну систему счисления(римскую или арабскую), 2 операнда и 1 оператор, пробелы между операндами и оператором. Пример: II * VI; 4 - 9" );
-        }
-
-        return "1";
-
-    }
-
-    static String calcResultInArabic (String firstOperand, String secondOperand, String operator ) throws ScannerException {
-        int result = 0;
-        int firstOperand1 = Integer.parseInt(firstOperand);
-        int secondOperand1 = Integer.parseInt(secondOperand);
-
-        switch (operator){
-            case "+":
-                result = firstOperand1 + secondOperand1;
-                break;
-            case "-":
-                result = firstOperand1 - secondOperand1;
-                break;
-            case "*":
-                result = firstOperand1 * secondOperand1;
-                break;
-            case "/":
-                result = firstOperand1 / secondOperand1;
-                break;
-            default:
-                throw new ScannerException("Неправильное арифметическое действие. Только +, -, *, /");
-        }
-
-        return Integer.toString(result);
+        return arabToRome;
     }
     }
