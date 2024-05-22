@@ -19,6 +19,10 @@ public class Main {
         String finalResult;
         String[] parts = input.split(" ");
 
+        if(parts.length > 3) {
+            throw new ScannerException("Максимум 2 операнда. Пример: 2 + 3; II * V");
+        }
+
         String firstOperand = parts[0];
         String operator = parts[1];
         String secondOperand = parts[2];
@@ -50,7 +54,7 @@ public class Main {
         int result;
         int firstOperand1 = Integer.parseInt(firstOperand);
         int secondOperand1 = Integer.parseInt(secondOperand);
-
+        
         switch (operator){
             case "+":
                 result = firstOperand1 + secondOperand1;
