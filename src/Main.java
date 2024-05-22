@@ -18,7 +18,7 @@ public class Main {
     public static String calc(String input, HashMap<String, String> romeToArab, HashMap<String, String> arabToRome) throws ScannerException {
         String finalResult;
         String[] parts = input.split(" ");
-
+    // исправление. ч1
         if(parts.length > 3) {
             throw new ScannerException("Максимум 2 операнда. Пример: 2 + 3; II * V");
         }
